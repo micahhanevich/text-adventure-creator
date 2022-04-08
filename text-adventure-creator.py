@@ -20,11 +20,7 @@ class Game(cmd.Cmd):
         pass
 
     def do_look(self, arg):
-        """Get a general room description\nUsage: look"""
-        pass
-
-    def do_lookaround(self, arg):
-        """Get a list of everything inside a room\nUsage: lookaround"""
+        """Look at the room in general or something specific\nUsage: look [<around>, <at> <description>]"""
         pass
 
     def do_drop(self, arg):
@@ -52,15 +48,15 @@ class Game(cmd.Cmd):
         pass
 
     def do_exit(self, arg):
-        """Close the game\nUsage: exit"""
+        """Close the game\nUsage: exit\nAltneratives: quit, close"""
         exit()
 
     def precmd(self, line: str) -> str:
-        return line
+        sline = line.split(' ')
+        if sline[0] in ['quit', 'close']:
+            self.do_exit(''.join(sline[1:]))
 
-    def do_quit(self, arg):
-        """Runs exit"""
-        self.do_exit(arg)
+        return line
 
     def default(self, line: str) -> bool:
         print(f"What does '{line}' mean?")
