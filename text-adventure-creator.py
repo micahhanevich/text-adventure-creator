@@ -1,7 +1,12 @@
 import json
 import cmd
+from functions import *
+
 
 class Game(cmd.Cmd):
+    with open('resources/builtin/creatures/slime.creature', 'r') as f:
+        j = json.load(f)
+    print(type(j))
 
     # Setting repeated prompt
     prompt = '\n>>'
@@ -21,7 +26,7 @@ class Game(cmd.Cmd):
 
     def do_look(self, arg):
         """Look at the room in general or something specific\nUsage: look [<around>, <at> <description>]"""
-        pass
+        look(Room(), arg)
 
     def do_drop(self, arg):
         """Attempt to drop an item\nUsage: drop <description>\nDescription: Text description of item"""
