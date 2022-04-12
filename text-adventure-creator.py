@@ -1,18 +1,37 @@
 import json
+from json import *
 import cmd
 from functions import *
+from structures import *
 
 
 class Game(cmd.Cmd):
-    with open('resources/builtin/creatures/slime.creature', 'r') as f:
-        j = json.load(f)
-    print(type(j))
+
+    def __init__(self):
+        super().__init__()
+        with open('settings', 'r') as f:
+            settings: dict = load(f)
+        self.settings: dict = settings
+
+        try: txtspd: TextSpeed = TextSpeed.getvalfromstr(self.settings['Text Speed'].upper())
+        except KeyError:
+            with open('settings', 'w') as f:
+                dump({'Text Speed': TextSpeed.NORMAL.name}, f)
+            txtspd = TextSpeed.NORMAL
+
+        if txtspd is not None:
+            self.settings['Text Speed'] = txtspd
+        else:
+            with open('settings', 'w') as f:
+                for key in settings:
+                    if key == 'Text Speed': settings[key] = TextSpeed.NORMAL.name
+                dump(settings, f)
 
     # Setting repeated prompt
     prompt = '\n>>'
 
     # Tell the player where they are at game start
-    intro = ''
+    intro = 'Begin'
 
     # COMMANDS
 
@@ -26,7 +45,7 @@ class Game(cmd.Cmd):
 
     def do_look(self, arg):
         """Look at the room in general or something specific\nUsage: look [<around>, <at> <description>]"""
-        look(Room(), arg)
+        look(Room(), self.settings, arg)
 
     def do_drop(self, arg):
         """Attempt to drop an item\nUsage: drop <description>\nDescription: Text description of item"""
@@ -51,6 +70,9 @@ class Game(cmd.Cmd):
     def do_carrying(self, arg):
         """Check your inventory\nUsage: carrying"""
         pass
+
+    def do_settings(self, arg):
+        settings(self.settings, arg)
 
     def do_exit(self, arg):
         """Close the game\nUsage: exit\nAltneratives: quit, close"""

@@ -22,3 +22,9 @@ class Creature:
         self.run = stats.get('run') if stats.get('run') is not None else 1
         self.shortdesc = kwargs.get('shortdesc', None)
         self.longdesc = kwargs.get('longdesc', None)
+
+    def __str__(self):
+        return '<class Creature>'
+
+    # def __format__(self, format_spec):
+    #     return f'<Creature {self.name} | vit: {self.vit} | str: {self.str} | dex: {self.dex} | end: {self.end} | run: {self.run}>'

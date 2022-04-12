@@ -1,4 +1,5 @@
 {
+	"name": "Slime", 
     "tags": ["slime","enemy","monster","creature","acidic"],
 	"stats": {
 		"vit": 1,
