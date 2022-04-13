@@ -13,10 +13,13 @@ class Game(cmd.Cmd):
             settings: dict = load(f)
         self.settings: dict = settings
 
-        try: txtspd: TextSpeed = TextSpeed.getvalfromstr(self.settings['Text Speed'].upper())
+        debug = False
+        try:
+            debug: bool = self.settings['Debug']
+            txtspd: TextSpeed = TextSpeed.getvalfromstr(self.settings['Text Speed'].upper())
         except KeyError:
             with open('settings', 'w') as f:
-                dump({'Text Speed': TextSpeed.NORMAL.name}, f)
+                dump({'Debug': False, 'Text Speed': TextSpeed.NORMAL.name}, f)
             txtspd = TextSpeed.NORMAL
 
         if txtspd is not None:
@@ -27,11 +30,13 @@ class Game(cmd.Cmd):
                     if key == 'Text Speed': settings[key] = TextSpeed.NORMAL.name
                 dump(settings, f)
 
+        self.settings['Debug'] = debug
+
     # Setting repeated prompt
-    prompt = '\n>>'
+    prompt = '\n\n>>'
 
     # Tell the player where they are at game start
-    intro = 'Begin'
+    intro = ''
 
     # COMMANDS
 
@@ -72,7 +77,10 @@ class Game(cmd.Cmd):
         pass
 
     def do_settings(self, arg):
-        settings(self.settings, arg)
+        """Check / change settings"""
+        setval = settings(self.settings, arg)
+        if setval is not None:
+            pass
 
     def do_exit(self, arg):
         """Close the game\nUsage: exit\nAltneratives: quit, close"""
