@@ -80,7 +80,8 @@ class Game(cmd.Cmd):
         """Check / change settings"""
         setval = settings(self.settings, arg)
         if setval is not None:
-            pass
+            with open('settings', 'w') as f:
+                dump(setval, f)
 
     def do_exit(self, arg):
         """Close the game\nUsage: exit\nAltneratives: quit, close"""

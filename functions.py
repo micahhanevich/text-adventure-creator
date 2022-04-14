@@ -11,10 +11,16 @@ def customprint(string: str, txtspd: TextSpeed):
 
 
 def look(room: Room, settings: dict, args: str):
-    args = args.strip(' ').split(' ')
-    if args == ['']: args = []
-    if len(args) == 0:
+    args = args.strip()
+    splargs = args.split(' ')
+    if args == '':
         customprint(f'You are in {room.longdesc}', txtspd=settings['Text Speed'])
+    elif splargs[0] == 'around':
+        customprint(f'You are in {room.shortdesc}\n{roomprint(room)}')
+
+
+def roomprint(room: Room):
+    pass
 
 
 def settings(settings: dict, args: str):
