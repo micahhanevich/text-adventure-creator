@@ -1,26 +1,39 @@
 import json
 from time import sleep
 from classes import *
+from classes import Feature
 from structures import *
 
 
-def customprint(string: str, txtspd: TextSpeed):
+def customprint(string: str, txtspd: TextSpeed = TextSpeed.NORMAL):
     for c in string:
         print(c, end='', flush=True)
         sleep(txtspd.value)
+
+
+def examine(room: Room, settings: dict, args: str):
+    pass
 
 
 def look(room: Room, settings: dict, args: str):
     args = args.strip()
     splargs = args.split(' ')
     if args == '':
-        customprint(f'You are in {room.longdesc}', txtspd=settings['Text Speed'])
+        customprint(f'You are in {room.getdesc(Feature.Desc.LONG)}.', txtspd=settings['Text Speed'])
     elif splargs[0] == 'around':
-        customprint(f'You are in {room.shortdesc}\n{roomprint(room)}')
+        customprint(f'You are in {room.getdesc(Feature.Desc.SHORT)}.\nIn the room is:\n{roomprint(room, settings)}' if len(room) > 0 else f'You are in {room.getdesc(Feature.Desc.SHORT)}.', txtspd=settings['Text Speed'])
+    elif splargs[0] == 'at':
+        examine(room, settings, ' '.join(splargs[1:]))
 
 
-def roomprint(room: Room):
-    pass
+def roomprint(room: Room, settings: dict) -> str:
+    out = ''
+    lroom = len(room)
+    if lroom == 1:
+        features = room.getfeatures()
+        feature: Feature = features[0]
+        out += f'There is a {feature.getdesc(Feature.Desc.SHORT)}.'
+    return out
 
 
 def settings(settings: dict, args: str):

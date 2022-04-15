@@ -1,12 +1,14 @@
 import enum
 
 
-class CanBeInWorld:
+class Feature:
     def __init__(self, **kwargs):
         self.name: str = kwargs.get('name', None)
         self._tags: list = kwargs.get('tags', [])
         self._shortdesc: str = kwargs.get('shortdesc', None)
         self._longdesc: str = kwargs.get('longdesc', None)
+
+        self.grammar = kwargs.get('grammar', 'a')
 
     def checkfortag(self, tag: str) -> bool:
         if tag in self._tags: return True
@@ -19,16 +21,16 @@ class CanBeInWorld:
     def gettags(self) -> list:
         return self._tags
 
-    def getdesc(self, desctype: Desc) -> str:
-        if desctype == CanBeInWorld.Desc.LONG:
+    def getdesc(self, desctype: Desc = Desc.SHORT) -> str:
+        if desctype == Feature.Desc.LONG:
             return self._longdesc
-        elif desctype == CanBeInWorld.Desc.SHORT:
+        elif desctype == Feature.Desc.SHORT:
             return self._shortdesc
         else:
             return self.name
 
 
-class Creature(CanBeInWorld):
+class Creature(Feature):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         stats: dict = kwargs.get('stats', {})
@@ -41,32 +43,60 @@ class Creature(CanBeInWorld):
     def __str__(self):
         return '<class Creature>'
 
-    # def __format__(self, format_spec):
-    #     return f'<Creature {self.name} | vit: {self.vit} | str: {self.str} | dex: {self.dex} | end: {self.end} | run: {self.run}>'
 
-
-class Item(CanBeInWorld):
+class Item(Feature):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
-class Object(CanBeInWorld):
+class Object(Feature):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
-class Room:
+class Room(Feature):
     def __init__(self, **kwargs):
-        self._id = kwargs.get('id', None)
-        self._tags: list = kwargs.get('tags', [])
-        self._items: list = []
-        self._objects: list = []
-        self._creatures: list = []
+        super().__init__(**kwargs)
+        self._items: list = kwargs.get('items', [])
+        self._objects: list = kwargs.get('objects', [])
+        self._creatures: list = kwargs.get('creatures', [])
 
-        self.shortdesc: str = kwargs.get('shortdesc', 'a blank room')
-        self.longdesc: str = kwargs.get('longdesc', 'a blank, uneventful room')
+    def getfeatures(self) -> list:
+        return self._items + self._objects + self._creatures
 
-    def __getitem__(self, item) -> [CanBeInWorld, None]:
+    def getfeatures_sorted(self) -> list:
+        out = self.getfeatures()
+        out.sort()
+        return out
+
+    def getfeatures_categorized(self) -> dict:
+        return {'creatures': self._creatures, 'items': self._items, 'objects': self._objects}
+
+    def getitems(self) -> list:
+        return self._items
+
+    def getitems_sorted(self) -> list:
+        out = self.getitems()
+        out.sort()
+        return out
+
+    def getobjects(self) -> list:
+        return self._objects
+
+    def getobjects_sorted(self) -> list:
+        out = self.getobjects()
+        out.sort()
+        return out
+
+    def getcreatures(self) -> list:
+        return self._creatures
+
+    def getcreatures_sorted(self) -> list:
+        out = self.getcreatures()
+        out.sort()
+        return out
+
+    def __getitem__(self, item) -> [Feature, None]:
         for i in self._items:
             i: Item
             if i.name == item: return i
@@ -90,3 +120,15 @@ class Room:
         for c in self._creatures:
             c: Creature
             if c.checkfortag(item): return c
+
+    def __len__(self):
+        return len(self._items) + len(self._objects) + len(self._creatures)
+
+
+from structures import Rooms
+
+
+class Player(Creature):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.location: dict = {'x': 0, 'y': 0, 'z': 0, 'room': Rooms.Nothing}

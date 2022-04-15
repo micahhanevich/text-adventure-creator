@@ -5,6 +5,9 @@ from functions import *
 from structures import *
 
 
+char = Player()
+
+
 class Game(cmd.Cmd):
 
     def __init__(self):
@@ -50,7 +53,7 @@ class Game(cmd.Cmd):
 
     def do_look(self, arg):
         """Look at the room in general or something specific\nUsage: look [<around>, <at> <description>]"""
-        look(Room(), self.settings, arg)
+        look(char.location['room'], self.settings, arg)
 
     def do_drop(self, arg):
         """Attempt to drop an item\nUsage: drop <description>\nDescription: Text description of item"""
