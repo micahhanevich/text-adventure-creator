@@ -92,7 +92,7 @@ class Game(cmd.Cmd):
 
     def precmd(self, line: str) -> str:
         sline = line.split(' ')
-        if sline[0] in ['quit', 'close']:
+        if sline[0].lower() in ['quit', 'close']:
             self.do_exit(''.join(sline[1:]))
 
         return line
@@ -102,5 +102,6 @@ class Game(cmd.Cmd):
         return False
 
 
+c = Cell(Rooms.StartCell.value)
 game = Game()
 game.cmdloop()

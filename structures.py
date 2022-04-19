@@ -1,8 +1,7 @@
-from enum import *
 from classes import *
 
 
-class TextSpeed(Enum):
+class TextSpeed(CustomEnum):
     INSTANT = 0.0
     HYPER = 0.01
     FAST = 0.04
@@ -18,56 +17,74 @@ class TextSpeed(Enum):
         return None
 
 
-class CustomEnum(Enum):
-    def __getattribute__(self, item):
-        attr = super().__getattribute__(item)
-        return attr
-
-
 class Items(CustomEnum):
-    Nothing = Item(
-        name='None',
-        tags=['nothing'],
-        shortdesc='nothing',
-        longdesc='whole lot of nothing',
-        grammar='a'
-    )
+    Nothing = Item(**{
+        'name': 'none',
+        'tags': ['nothing'],
+        'shortdesc': 'nothing',
+        'longdesc': 'whole lot of nothing',
+        'grammar': 'a'
+    })
 
 
 class Objects(CustomEnum):
-    Nothing = Object(
-        name='None',
-        tags=['nothing'],
-        shortdesc='nothing',
-        longdesc='whole lot of nothing',
-        grammar='a'
-    )
+    Nothing = Object(**{
+        'name': 'none',
+        'tags': ['nothing'],
+        'shortdesc': 'nothing',
+        'longdesc': 'whole lot of nothing',
+        'grammar': 'a'
+    }),
+    PrisonSkeleton = Object(**{
+        'name': 'skeleton',
+        'tags': ['skelly', 'body', 'corpse', 'prisoner', 'dead', 'guy', 'person'],
+        'shortdesc': 'old skeleton up against the wall',
+        'longdesc': 'bleached, old skeleton of the last poor sod to be thrown in here',
+        'shortgrammar': 'an',
+        'longgrammar': 'a'
+    })
 
 
 class Creatures(CustomEnum):
-    Nothing = Object(
-        name='None',
-        tags=['nothing'],
-        shortdesc='nothing',
-        longdesc='whole lot of nothing',
-        grammar='a'
-    )
+    Nothing = Object(**{
+        'name': 'none',
+        'tags': ['nothing'],
+        'shortdesc': 'nothing',
+        'longdesc': 'whole lot of nothing',
+        'grammar': 'a'
+    })
 
 
 class Rooms(CustomEnum):
-    Nothing = Object(
-        name='None',
-        tags=['nothing'],
-        shortdesc='nothing',
-        longdesc='whole lot of nothing',
-        grammar='a',
-        items=[
-            Items.Nothing,
-        ],
-        objects=[
-            Objects.Nothing,
-        ],
-        creatures=[
-            Creatures.Nothing
-        ]
-    )
+    Nothing = Room(**{
+        'name': 'none',
+        'tags': ['nothing'],
+        'shortdesc': 'nothing',
+        'longdesc': 'whole lot of nothing',
+        'longgrammar': 'a',
+        'shortgrammar': 'abuncha',
+        'items': [],
+        'objects': [],
+        'creatures': []
+    })
+    Test = Room(**{
+        'name': 'none',
+        'tags': ['nothing'],
+        'shortdesc': 'nothing',
+        'longdesc': 'whole lot of nothing',
+        'longgrammar': 'a',
+        'shortgrammar': 'abuncha',
+        'items': [],
+        'objects': [Objects.PrisonSkeleton.value, Objects.PrisonSkeleton.value, Objects.PrisonSkeleton.value, Objects.PrisonSkeleton.value, Objects.PrisonSkeleton.value],
+        'creatures': []
+    })
+    StartCell = Room(**{
+        'name': 'cell',
+        'tags': ['cell', 'room', 'prison'],
+        'shortdesc': 'cramped, moldy cell',
+        'longdesc': 'tiny, cramped cell full of mold and mildew',
+        'grammar': 'a',
+        'items': [],
+        'objects': [Objects.PrisonSkeleton.value],
+        'creatures': []
+    })

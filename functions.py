@@ -12,16 +12,20 @@ def customprint(string: str, txtspd: TextSpeed = TextSpeed.NORMAL):
 
 
 def examine(room: Room, settings: dict, args: str):
-    pass
+    feature = room.find(args)
+    if feature is None:
+        customprint(f'I don\'t see a "{args}" in here...', settings['Text Speed'])
+    else:
+        customprint(f'{feature.longgrammar} {feature.getdesc(Feature.Desc.LONG)}.', settings['Text Speed'])
 
 
 def look(room: Room, settings: dict, args: str):
     args = args.strip()
     splargs = args.split(' ')
     if args == '':
-        customprint(f'You are in {room.getdesc(Feature.Desc.LONG)}.', txtspd=settings['Text Speed'])
+        customprint(f'You are in {room.longgrammar} {room.getdesc(Feature.Desc.LONG)}.', txtspd=settings['Text Speed'])
     elif splargs[0] == 'around':
-        customprint(f'You are in {room.getdesc(Feature.Desc.SHORT)}.\nIn the room is:\n{roomprint(room, settings)}' if len(room) > 0 else f'You are in {room.getdesc(Feature.Desc.SHORT)}.', txtspd=settings['Text Speed'])
+        customprint(f'You are in {room.shortgrammar} {room.getdesc(Feature.Desc.SHORT)}.\n{roomprint(room, settings)}' if len(room) > 0 else f'You are in {room.shortgrammar} {room.getdesc(Feature.Desc.SHORT)}.', txtspd=settings['Text Speed'])
     elif splargs[0] == 'at':
         examine(room, settings, ' '.join(splargs[1:]))
 
@@ -29,10 +33,21 @@ def look(room: Room, settings: dict, args: str):
 def roomprint(room: Room, settings: dict) -> str:
     out = ''
     lroom = len(room)
+    features = room.getfeatures()
     if lroom == 1:
-        features = room.getfeatures()
         feature: Feature = features[0]
-        out += f'There is a {feature.getdesc(Feature.Desc.SHORT)}.'
+        out += f'There is {feature.shortgrammar} {feature.getdesc(Feature.Desc.SHORT)}.'
+    elif lroom == 2:
+        out += f'There is {features[0].shortgrammar} {features[0].getdesc(Feature.Desc.SHORT)}\nand {features[1].shortgrammar} {features[1].getdesc(Feature.Desc.SHORT)}'
+    elif lroom == 3:
+        out += f'There is {features[0].shortgrammar} {features[0].getdesc(Feature.Desc.SHORT)},\n{features[1].shortgrammar} {features[1].getdesc(Feature.Desc.SHORT)},\nand {features[1].shortgrammar} {features[1].getdesc(Feature.Desc.SHORT)}'
+    elif lroom > 3:
+        out += f'There is '
+        for feature in features[0:-1]:
+            out += f'{feature.shortgrammar} {feature.getdesc(Feature.Desc.SHORT)},\n'
+        out += f'and {features[-1].shortgrammar} {features[-1].getdesc(Feature.Desc.SHORT)}'
+    else: return 'There is nothing here...'
+
     return out
 
 

@@ -1,4 +1,15 @@
-import enum
+from enum import *
+
+
+class CustomEnum(Enum):
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self.value == other
+
+        if type(other) is type(self):
+            return super().__eq__(other)
+
+        return False
 
 
 class Feature:
@@ -8,13 +19,14 @@ class Feature:
         self._shortdesc: str = kwargs.get('shortdesc', None)
         self._longdesc: str = kwargs.get('longdesc', None)
 
-        self.grammar = kwargs.get('grammar', 'a')
+        self.shortgrammar = kwargs.get('shortgrammar', kwargs.get('grammar', 'a'))
+        self.longgrammar = kwargs.get('longgrammar', kwargs.get('grammar', 'a'))
 
     def checkfortag(self, tag: str) -> bool:
-        if tag in self._tags: return True
+        if tag.lower() in self._tags: return True
         else: return False
 
-    class Desc(enum.Enum):
+    class Desc(CustomEnum):
         LONG = 'longdesc'
         SHORT = 'shortdesc'
 
@@ -96,18 +108,20 @@ class Room(Feature):
         out.sort()
         return out
 
-    def __getitem__(self, item) -> [Feature, None]:
+    def find(self, item: str) -> [Feature, None]:
+        item = item.lower()
+
         for i in self._items:
             i: Item
-            if i.name == item: return i
+            if i.name.lower() == item: return i
 
         for o in self._objects:
             o: Object
-            if o.name == item: return o
+            if o.name.lower() == item: return o
 
         for c in self._creatures:
             c: Creature
-            if c.name == item: return c
+            if c.name.lower() == item: return c
 
         for i in self._items:
             i: Item
@@ -121,8 +135,38 @@ class Room(Feature):
             c: Creature
             if c.checkfortag(item): return c
 
+        return None
+
     def __len__(self):
         return len(self._items) + len(self._objects) + len(self._creatures)
+
+
+class Cell:
+    def __init__(self, room: Room, direction: dict = {'n': None, }):
+        self.Room = room
+        self.direction = direction
+
+
+class Floor:
+    def __init__(self, items: list):
+        self._items = items
+
+    def __getitem__(self, item):
+        return self._items[item]
+
+    def __setitem__(self, key, value):
+        self._items[key] = value
+
+
+class World:
+    def __init__(self, floors: list):
+        self._items = floors
+
+    def __getitem__(self, item):
+        return self._items[item]
+
+    def __setitem__(self, key, value):
+        self._items[key] = value
 
 
 from structures import Rooms
@@ -131,4 +175,4 @@ from structures import Rooms
 class Player(Creature):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.location: dict = {'x': 0, 'y': 0, 'z': 0, 'room': Rooms.Nothing}
+        self.location: dict = {'x': 0, 'y': 0, 'z': 0, 'room': Rooms.Test.value}
