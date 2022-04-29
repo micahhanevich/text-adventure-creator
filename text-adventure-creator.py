@@ -3,6 +3,7 @@ from json import *
 import cmd
 from functions import *
 from structures import *
+from os import listdir
 
 
 char = Player()
@@ -40,6 +41,10 @@ class Game(cmd.Cmd):
 
     # Tell the player where they are at game start
     intro = ''
+
+    # Store command aliases
+    aliases = {}
+    qrefalias = {}
 
     # COMMANDS
 
@@ -92,10 +97,18 @@ class Game(cmd.Cmd):
 
     def precmd(self, line: str) -> str:
         sline = line.split(' ')
-        if sline[0].lower() in ['quit', 'close']:
-            self.do_exit(''.join(sline[1:]))
-
+        for alias in self.qrefalias:
+            if alias == line:
+                getattr(self, self.qrefalias[alias][0])(self.qrefalias[alias][1])
         return line
+
+    def preloop(self) -> None:
+        for builtincmd in listdir('resources/builtin/commands'):
+            with open('resources/builtin/commands/' + builtincmd, 'r') as cmd:
+                cmd = load(cmd)
+                self.aliases.update({builtincmd: cmd})
+                for alias in cmd['aliases']:
+                    self.qrefalias.update({alias: [cmd['function'], cmd['default_params']]})
 
     def default(self, line: str) -> bool:
         print(f"What does '{line}' mean?")

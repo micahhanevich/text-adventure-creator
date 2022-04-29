@@ -1,0 +1,6 @@
+{
+	"function": "do_exit",
+	"aliases": ["quit", "close"],
+	"default_params": null
+	"debug": false
+}
