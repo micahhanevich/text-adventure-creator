@@ -1,6 +1,12 @@
 {
-	"function": "do_exit",
-	"aliases": ["quit", "close"],
-	"default_params": null
-	"debug": false
+	"command_settings": { 		// contains settings for your custom command
+		"aliases": ["quit"], 	// a list of words that reference this command
+		"function": null, 		// directly runs a predefined "do_" command; if not null, skips "commands" list
+		"default_params": null, // params to use if "function" is not null
+		"debug": false 			// true makes command inaccessible if not in debug mode
+	},
+	"commands": [
+		{"command": "print", "params": {"string": "Closing game..."}},
+		{"command": "exit", "params": null}
+	]
 }

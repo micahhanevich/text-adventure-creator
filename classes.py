@@ -1,4 +1,6 @@
+import json
 from enum import *
+from json import *
 
 
 class CustomEnum(Enum):
@@ -176,3 +178,8 @@ class Player(Creature):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.location: dict = {'x': 0, 'y': 0, 'z': 0, 'room': Rooms.Test.value}
+
+
+class Command:
+    def __init__(self, rawcmd: dict):
+        self.rawcmd = rawcmd
