@@ -75,3 +75,18 @@ def settings(settings: dict, args: str):
         settings[' '.join(splargs[1:(len(splargs) - 1)])] = splargs[-1]
         settings['Text Speed'] = TextSpeed.getvalfromstr(settings['Text Speed'])
         return settings
+
+    
+class CustomCmdHooks(CustomEnum):
+    EXIT = exit
+    PRINT = customprint
+
+
+class Translator:
+    def __init__(self):
+        self._reader = json.JSONDecoder()
+
+    def get_cmd(self, filepath: str):
+        with open(filepath, 'r') as f:
+            cmdjson = self._reader.decode('\n'.join(f.readlines()))
+

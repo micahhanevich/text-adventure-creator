@@ -17,24 +17,20 @@ class Game(cmd.Cmd):
             settings: dict = load(f)
         self.settings: dict = settings
 
-        debug = False
         try:
             debug: bool = self.settings['Debug']
+            if type(debug) != bool: raise KeyError
+        except (KeyError, AttributeError):
+            self.settings.update({'Debug': False})
+
+        try:
             txtspd: TextSpeed = TextSpeed.getvalfromstr(self.settings['Text Speed'].upper())
-        except KeyError:
-            with open('settings', 'w') as f:
-                dump({'Debug': False, 'Text Speed': TextSpeed.NORMAL.name}, f)
-            txtspd = TextSpeed.NORMAL
+            if txtspd is None: raise KeyError
+            else: self.settings.update({'Text Speed': txtspd.name})
+        except (KeyError, AttributeError):
+            self.settings.update({'Text Speed': TextSpeed.NORMAL.name})
 
-        if txtspd is not None:
-            self.settings['Text Speed'] = txtspd
-        else:
-            with open('settings', 'w') as f:
-                for key in settings:
-                    if key == 'Text Speed': settings[key] = TextSpeed.NORMAL.name
-                dump(settings, f)
-
-        self.settings['Debug'] = debug
+        Game.update_settings(self.settings)
 
     # Setting repeated prompt
     prompt = '\n\n>>'
@@ -88,12 +84,17 @@ class Game(cmd.Cmd):
         """Check / change settings"""
         setval = settings(self.settings, arg)
         if setval is not None:
-            with open('settings', 'w') as f:
-                dump(setval, f)
+            Game.update_settings(setval)
 
     def do_exit(self, arg):
         """Close the game\nUsage: exit\nAltneratives: quit, close"""
         exit()
+        pass
+
+    @staticmethod
+    def update_settings(settings: dict) -> None:
+        with open('settings', 'w') as f:
+            dump(settings, f)
 
     def precmd(self, line: str) -> str:
         sline = line.split(' ')
