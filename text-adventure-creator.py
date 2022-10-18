@@ -1,6 +1,8 @@
-import json
+from typing import TextIO
+
+import json5 as json
 from json import *
-import cmd
+import cmd as CMD
 from functions import *
 from structures import *
 from os import listdir
@@ -9,7 +11,7 @@ from os import listdir
 char = Player()
 
 
-class Game(cmd.Cmd):
+class Game(CMD.Cmd):
 
     def __init__(self):
         super().__init__()
@@ -104,12 +106,21 @@ class Game(cmd.Cmd):
         return line
 
     def preloop(self) -> None:
-        for builtincmd in listdir('resources/builtin/commands'):
-            with open('resources/builtin/commands/' + builtincmd, 'r') as cmd:
-                cmd = load(cmd)
-                self.aliases.update({builtincmd: cmd})
-                for alias in cmd['aliases']:
-                    self.qrefalias.update({alias: [cmd['function'], cmd['default_params']]})
+        try:
+            for builtincmd in listdir('resources/builtin/commands'):
+                with open('resources/builtin/commands/' + builtincmd, 'r') as cmd:
+                    try:
+                        cmd = load(cmd)
+                        self.aliases.update({builtincmd: cmd})
+                        for alias in cmd['command_settings']['aliases']:
+                            self.qrefalias.update({alias: [cmd['command_settings']['function'], cmd['command_settings']['default_params']]})
+                    except json.decoder.JSONDecodeError as e:
+                        customprint('command resources/builtin/commands/' + builtincmd + ' was not formatted properly and failed to load\n', TextSpeed.HYPER)
+        except FileNotFoundError as e:
+            customprint('FATAL ERROR: 0001\nBuiltins could not be found', TextSpeed.SNAIL)
+            if self.settings['Debug']:
+                customprint(e, TextSpeed.INSTANT)
+            exit(1)
 
     def default(self, line: str) -> bool:
         print(f"What does '{line}' mean?")
