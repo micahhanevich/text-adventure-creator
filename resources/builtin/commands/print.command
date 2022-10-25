@@ -1,7 +1,7 @@
 {
 	"command_settings": {
-		"aliases": ["quit"],
-		"function": null,	
+		"aliases": ["say"],
+		"function": null,
 		"default_params": null,
 		"debug": false
 	},

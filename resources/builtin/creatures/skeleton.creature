@@ -1,0 +1,13 @@
+{
+	"name": "Skeleton",
+    "tags": ["undead","enemy","monster","creature","necrotic"],
+	"stats": {
+		"vit": 1,
+		"str": 1,
+		"dex": 1,
+		"end": 1,
+		"run": 0
+	},
+	"shortdesc": "a rattling, wobbling skeleton.",
+	"longdesc": "an average-sized skeleton, wobbling back and forth. Barely held together by weak necromantic energies."
+}

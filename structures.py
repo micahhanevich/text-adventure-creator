@@ -37,7 +37,7 @@ class Objects(CustomEnum):
     }),
     PrisonSkeleton = Object(**{
         'name': 'skeleton',
-        'tags': ['skelly', 'body', 'corpse', 'prisoner', 'dead', 'guy', 'person'],
+        'tags': ['skelly', 'skeleton', 'body', 'corpse', 'prisoner', 'dead', 'guy', 'person'],
         'shortdesc': 'old skeleton up against the wall',
         'longdesc': 'bleached, old skeleton of the last poor sod to be thrown in here',
         'shortgrammar': 'an',
@@ -53,6 +53,20 @@ class Creatures(CustomEnum):
         'longdesc': 'whole lot of nothing',
         'grammar': 'a'
     })
+    KeyRat = Creature(**{
+        'name': 'none',
+        'tags': ['nothing'],
+        'shortdesc': 'nothing',
+        'longdesc': 'whole lot of nothing',
+        'grammar': 'a',
+        'stats': {
+            'vit': 0,
+            'str': 0,
+            'dex': 0,
+            'end': 0,
+            'run': 0
+        }
+    }),
 
 
 class Rooms(CustomEnum):

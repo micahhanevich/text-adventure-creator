@@ -25,8 +25,10 @@ class Feature:
         self.longgrammar = kwargs.get('longgrammar', kwargs.get('grammar', 'a'))
 
     def checkfortag(self, tag: str) -> bool:
-        if tag.lower() in self._tags: return True
-        else: return False
+        if tag.lower() in self._tags:
+            return True
+        else:
+            return False
 
     class Desc(CustomEnum):
         LONG = 'longdesc'
@@ -63,9 +65,23 @@ class Item(Feature):
         super().__init__(**kwargs)
 
 
+class Key(Item):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.door: Door = kwargs.get('door', None)
+
+
 class Object(Feature):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+
+class Door(Object):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.locked: bool = kwargs.get('locked', False)
+        self.exit: Room = kwargs.get('room', None)
+        self.exitcoords: list[int] = kwargs.get('exitcoords', None)
 
 
 class Room(Feature):
@@ -115,27 +131,33 @@ class Room(Feature):
 
         for i in self._items:
             i: Item
-            if i.name.lower() == item: return i
+            if i.name.lower() == item:
+                return i
 
         for o in self._objects:
             o: Object
-            if o.name.lower() == item: return o
+            if o.name.lower() == item:
+                return o
 
         for c in self._creatures:
             c: Creature
-            if c.name.lower() == item: return c
+            if c.name.lower() == item:
+                return c
 
         for i in self._items:
             i: Item
-            if i.checkfortag(item): return i
+            if i.checkfortag(item):
+                return i
 
         for o in self._objects:
             o: Object
-            if o.checkfortag(item): return o
+            if o.checkfortag(item):
+                return o
 
         for c in self._creatures:
             c: Creature
-            if c.checkfortag(item): return c
+            if c.checkfortag(item):
+                return c
 
         return None
 
@@ -144,9 +166,9 @@ class Room(Feature):
 
 
 class Cell:
-    def __init__(self, room: Room, direction: dict = {'n': None, }):
+    def __init__(self, room: Room, **kwargs):
         self.Room = room
-        self.direction = direction
+        self.direction = kwargs.get('direction', {'n': None, 's': None, 'e': None, 'w': None})
 
 
 class Floor:
