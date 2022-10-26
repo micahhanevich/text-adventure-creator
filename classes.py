@@ -1,6 +1,7 @@
 import json
 from enum import *
 from json import *
+from structures import Rooms
 
 
 class CustomEnum(Enum):
@@ -50,11 +51,11 @@ class Creature(Feature):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         stats: dict = kwargs.get('stats', {})
-        self.vit = stats.get('vit') if stats.get('vit') is not None else 1
-        self.str = stats.get('str') if stats.get('str') is not None else 1
-        self.dex = stats.get('dex') if stats.get('dex') is not None else 1
-        self.end = stats.get('end') if stats.get('end') is not None else 1
-        self.run = stats.get('run') if stats.get('run') is not None else 1
+        self.vit = stats.get('vit') if stats.get('vit') is not None else 0
+        self.str = stats.get('str') if stats.get('str') is not None else 0
+        self.dex = stats.get('dex') if stats.get('dex') is not None else 0
+        self.end = stats.get('end') if stats.get('end') is not None else 0
+        self.run = stats.get('run') if stats.get('run') is not None else 0
 
     def __str__(self):
         return '<class Creature>'
@@ -63,12 +64,6 @@ class Creature(Feature):
 class Item(Feature):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-
-class Key(Item):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.door: Door = kwargs.get('door', None)
 
 
 class Object(Feature):
@@ -81,7 +76,37 @@ class Door(Object):
         super().__init__(**kwargs)
         self.locked: bool = kwargs.get('locked', False)
         self.exit: Room = kwargs.get('room', None)
-        self.exitcoords: list[int] = kwargs.get('exitcoords', None)
+        self.unlock = _unlock
+
+
+class Key(Item):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.door: Door = kwargs.get('door', None)
+        self.uses: int = kwargs.get('uses', -1)
+        self.skeleton: bool = kwargs.get('skeleton', False)
+
+    def use(self, door: Door) -> bool:
+        if isinstance(door, self.door) or self.skeleton:
+            self.destroy()
+            return True
+        else:
+            print(self.name, 'does not fit in that lock.')
+            return False
+
+    def destroy(self):
+        if self.uses > 0:
+            self.uses -= 1
+        if self.uses == 0:
+            print('your', self.name, 'broke!')
+            del self
+
+
+def _unlock(key: Key):
+    pass
+
+d = Door()
+d.unlock(k)
 
 
 class Room(Feature):
@@ -165,12 +190,6 @@ class Room(Feature):
         return len(self._items) + len(self._objects) + len(self._creatures)
 
 
-class Cell:
-    def __init__(self, room: Room, **kwargs):
-        self.Room = room
-        self.direction = kwargs.get('direction', {'n': None, 's': None, 'e': None, 'w': None})
-
-
 class Floor:
     def __init__(self, items: list):
         self._items = items
@@ -191,9 +210,6 @@ class World:
 
     def __setitem__(self, key, value):
         self._items[key] = value
-
-
-from structures import Rooms
 
 
 class Player(Creature):

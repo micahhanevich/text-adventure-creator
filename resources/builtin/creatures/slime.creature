@@ -4,10 +4,13 @@
 	"stats": {
 		"vit": 1,
 		"str": 0,
-		"dex": 1,
-		"end": 0,
+		"dex": -1,
+		"end": -1,
 		"run": -1
 	},
-	"shortdesc": "a small, translucent slime",
-	"longdesc": "a two foot tall, green translucent slime. It preys on creatures smaller than itself by swallowing them whole and drowning them."
+	"shortdesc": "small, translucent slime",
+	"longdesc": "two foot tall, green translucent slime. It preys on creatures smaller than itself by swallowing them whole and drowning them.",
+	"grammar": "a",
+	"shortgrammar": null,
+	"longgrammar": null
 }
