@@ -32,7 +32,6 @@ def examine(room: Room, args: str, **kwargs) -> None:
 
 
 def exit_game(**kwargs) -> None:
-    l_settings = kwargs.get('settings', settings)
     customprint('\nExit Game?\n(Y/N)')
     if get_keyboard_input():
         customprint('\n\nClosing Game...')
@@ -42,7 +41,6 @@ def exit_game(**kwargs) -> None:
 
 
 def get_keyboard_input(desiredkeypress: str = 'y', **kwargs) -> bool:
-    l_settings = kwargs.get('settings', settings)
     while True:
         event = keyboard.read_event()
         if event.event_type == keyboard.KEY_DOWN:
@@ -54,23 +52,22 @@ def get_keyboard_input(desiredkeypress: str = 'y', **kwargs) -> bool:
 
 
 def look(room: Room, args: str, **kwargs):
-    l_settings = kwargs.get('settings', settings)
     args = args.strip()
     splargs = args.split(' ')
-    if args == '':
-        customprint(f'You are in {room.longgrammar} {room.getdesc(Feature.Desc.LONG)}.',
-                    txtspd=l_settings['Text Speed'])
-    elif splargs[0] == 'around':
-        customprint(
-            f'You are in {room.shortgrammar} {room.getdesc(Feature.Desc.SHORT)}.\n{roomprint(room)}' if len(
-                room) > 0 else f'You are in {room.shortgrammar} {room.getdesc(Feature.Desc.SHORT)}.',
-            txtspd=l_settings['Text Speed'])
-    elif splargs[0] == 'at':
-        examine(room, ' '.join(splargs[1:]))
+    try:
+        if args == '':
+            customprint(f'You are in {room.longgrammar} {room.getdesc(Feature.Desc.LONG)}.')
+        elif splargs[0] == 'around':
+            customprint(
+                f'You are in {room.shortgrammar} {room.getdesc(Feature.Desc.SHORT)}.\n{roomprint(room)}' if len(
+                    room) > 0 else f'You are in {room.shortgrammar} {room.getdesc(Feature.Desc.SHORT)}.')
+        elif splargs[0] == 'at':
+            examine(room, ' '.join(splargs[1:]))
+    except AttributeError as e:
+        customprint('Player is not in a room.')
 
 
 def roomprint(room: Room, **kwargs) -> str:
-    l_settings = kwargs.get('settings', settings)
     out = ''
     lroom = len(room)
     features = room.getfeatures()
@@ -93,18 +90,17 @@ def roomprint(room: Room, **kwargs) -> str:
 
 
 def settingscmd(args: str, **kwargs):
-    l_settings = kwargs.get('settings', settings)
     splargs = args.split(' ')
     if args == '':
 
         barlen = 0
         keylen = 0
         lines = []
-        for setting in l_settings:
+        for setting in settings:
             if len(setting) > keylen:
                 keylen = len(setting)
-        for setting in l_settings:
-            lines.append(f'{setting}{" " * (keylen - len(setting) + 1)}= {l_settings[setting]}\n')
+        for setting in settings:
+            lines.append(f'{setting}{" " * (keylen - len(setting) + 1)}= {settings[setting]}\n')
         for line in lines:
             if len(line) > barlen:
                 barlen = len(line)
@@ -112,13 +108,13 @@ def settingscmd(args: str, **kwargs):
         customprint(f'SETTINGS\n{"-" * barlen}\n{"".join(lines)}{"-" * barlen}', TextSpeed.HYPER)
 
     elif splargs[0] == 'set':
-        if l_settings.get(' '.join(splargs[1:-1])) is None:
+        if settings.get(' '.join(splargs[1:-1])) is None:
             customprint(f'No Setting "{" ".join(splargs[1:-1])}"', TextSpeed.HYPER)
             return None
 
-        l_settings[' '.join(splargs[1:(len(splargs) - 1)])] = splargs[-1]
-        l_settings['Text Speed'] = TextSpeed.getvalfromstr(l_settings['Text Speed'])
-        return l_settings
+        settings[' '.join(splargs[1:(len(splargs) - 1)])] = splargs[-1]
+        settings['Text Speed'] = TextSpeed.getvalfromstr(settings['Text Speed'])
+        return settings
 
 
 class CustomCmdHooks(CustomEnum):

@@ -1,7 +1,6 @@
 import json
 from enum import *
 from json import *
-from structures import Rooms
 
 
 class CustomEnum(Enum):
@@ -76,7 +75,10 @@ class Door(Object):
         super().__init__(**kwargs)
         self.locked: bool = kwargs.get('locked', False)
         self.exit: Room = kwargs.get('room', None)
-        self.unlock = _unlock
+
+    def unlock(self):
+        print('the', self.getdesc(Desc.SHORT), 'unlocked!')
+        self.locked = False
 
 
 class Key(Item):
@@ -88,25 +90,19 @@ class Key(Item):
 
     def use(self, door: Door) -> bool:
         if isinstance(door, self.door) or self.skeleton:
-            self.destroy()
+            door.unlock()
+            self.damage()
             return True
         else:
             print(self.name, 'does not fit in that lock.')
             return False
 
-    def destroy(self):
+    def damage(self):
         if self.uses > 0:
             self.uses -= 1
         if self.uses == 0:
             print('your', self.name, 'broke!')
             del self
-
-
-def _unlock(key: Key):
-    pass
-
-d = Door()
-d.unlock(k)
 
 
 class Room(Feature):
@@ -200,6 +196,9 @@ class Floor:
     def __setitem__(self, key, value):
         self._items[key] = value
 
+    def __add__(self, other):
+        self._items.append(other)
+
 
 class World:
     def __init__(self, floors: list):
@@ -215,7 +214,7 @@ class World:
 class Player(Creature):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.location: dict = {'x': 0, 'y': 0, 'z': 0, 'room': Rooms.Test.value}
+        self.location: dict = {'x': 0, 'y': 0, 'z': 0, 'room': None}
 
 
 class Command:

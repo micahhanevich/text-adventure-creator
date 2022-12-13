@@ -144,7 +144,7 @@ class DevGame(DebugGame):
         exec(arg)
 
 
-c = Cell(Rooms.StartCell.value)
+# c = Cell(Rooms.StartCell.value)
 
 try:
     with open('settings', 'r') as f:
