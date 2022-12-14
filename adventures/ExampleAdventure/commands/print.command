@@ -6,7 +6,7 @@
 		"debug": false
 	},
 	"commands": [
-		{"command": "customprint", "params": {"string": "Closing game..."}},
-		{"command": "exit_game", "params": null}
+		{"command": "print", "params": {"string": "Closing game..."}},
+		{"command": "exit", "params": null}
 	]
 }

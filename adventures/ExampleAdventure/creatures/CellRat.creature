@@ -1,0 +1,16 @@
+{
+	"name": "Cell Rat",
+    "tags": ["beast","enemy","monster","creature","wild","critter"],
+	"stats": {
+		"vit": -2,
+		"str": -1,
+		"dex": 1,
+		"end": -2,
+		"run": -2
+	},
+	"shortdesc": "small, toe-nibbling rat.",
+	"longdesc": "much-larger-than-normal rat. ...It keeps trying to nibble your toes.",
+	"grammar": "a",
+	"shortgrammar": null,
+	"longgrammar": null
+}

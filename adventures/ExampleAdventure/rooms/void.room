@@ -1,0 +1,12 @@
+{
+	"name": "Cell",
+	"tags": [],
+	"shortdesc": "cramped, moldy cell",
+	"longdesc": "cramped, dingy cell full of mold and decay",
+	"grammar": "a",
+	"longgrammar": null,
+	"shortgrammar": null,
+	"items": ["Builtins.Items.RustyKey"],
+	"objects": ["Builtins.Objects.PrisonSkeleton"],
+	"creatures": ["Builtins.Creatures.CellRat"]
+}

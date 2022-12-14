@@ -1,3 +1,4 @@
+import sys
 from typing import overload
 import json5 as json
 import keyboard
@@ -31,7 +32,7 @@ def examine(room: Room, args: str, **kwargs) -> None:
         customprint(f'{feature.longgrammar} {feature.getdesc(Feature.Desc.LONG)}.', l_settings['Text Speed'])
 
 
-def exit_game(**kwargs) -> None:
+def exit_game(*args, **kwargs) -> None:
     customprint('\nExit Game?\n(Y/N)')
     if get_keyboard_input():
         customprint('\n\nClosing Game...')
@@ -42,7 +43,7 @@ def exit_game(**kwargs) -> None:
 
 def get_keyboard_input(desiredkeypress: str = 'y', **kwargs) -> bool:
     while True:
-        event = keyboard.read_event()
+        event = keyboard.read_event(suppress=True)
         if event.event_type == keyboard.KEY_DOWN:
             key: str = event.name
             if key.lower() == desiredkeypress.lower():

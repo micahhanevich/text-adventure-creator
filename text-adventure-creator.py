@@ -10,6 +10,17 @@ from os import listdir
 char = Player()
 
 
+class MenuShell(CMD.Cmd):
+
+    # Setting repeated prompt
+    prompt = '\n<~~°~~>\n>>'
+
+    # Commands
+
+    def do_load(self, arg):
+        load()
+
+
 class Game(CMD.Cmd):
 
     def __init__(self):
@@ -87,10 +98,6 @@ class Game(CMD.Cmd):
         if setval is not None:
             Game.update_settings()
 
-    def do_exit(self, arg):
-        """Close the game\nUsage: exit\nAltneratives: quit"""
-        exit_game()
-        pass
 
     @staticmethod
     def update_settings() -> None:
@@ -102,21 +109,36 @@ class Game(CMD.Cmd):
         for alias in self.qrefalias.keys():
             if alias == line:
                 getattr(self, str(self.qrefalias[alias][0]))(self.qrefalias[alias][1])
+                input
         return line
 
     def preloop(self) -> None:
         try:
+
+            # Find every .command file
             ldir = []
             for file in listdir('resources/builtin/commands'):
                 if file.endswith('.command'):
                     ldir.append(file)
+
+            # For every builtin command found,
             for builtincmd in ldir:
                 with open('resources/builtin/commands/' + builtincmd, 'r') as cmd:
                     try:
+                        builtincmd = builtincmd[:builtincmd.rfind('.')]
+                        # Load the command's JSON
                         cmd = load(cmd)
+
+                        # Add the new command so Cmd recognizes it
+                        func = cmd['commands']
+                        self.__setattr__('do_' + builtincmd, func)
+
+                        # Update the aliases to support new command
                         self.aliases.update({builtincmd: cmd})
                         for alias in cmd['command_settings']['aliases']:
-                            self.qrefalias.update({alias: [cmd['command_settings']['function'], cmd['command_settings']['default_params']]})
+                            # self.qrefalias.update({alias: [cmd['command_settings']['function'], cmd['command_settings']['default_params']]})
+                            self.__setattr__('do_' + alias, self.__getattribute__('do_' + builtincmd))
+
                     except json.decoder.JSONDecodeError as e:
                         customprint('\n!WARNING! - Command resources/builtin/commands/' + builtincmd + ' was not formatted properly and failed to load\n', TextSpeed.INSTANT)
         except FileNotFoundError as e:
@@ -126,8 +148,19 @@ class Game(CMD.Cmd):
                 customprint(e, TextSpeed.INSTANT)
             exit(1)
 
+    def onecmd(self, line: str) -> bool:
+        try:
+            return super().onecmd(line)
+        except TypeError:
+            cmd, arg, line = self.parseline(line)
+            cmd: dict = self.__getattribute__('do_' + cmd)
+            for i in range(0, len(cmd) - 1):
+                exec('{0}({1})'.format(cmd[i]['command'], cmd[i]['params']))
+            return exec('{0}({1})'.format(cmd[-1]['command'], cmd[-1]['params']))
+
     def default(self, line: str) -> bool:
-        print(f"What does '{line}' mean?")
+        if line[0:line.find(' ')] not in self.qrefalias:
+            print(f"What does '{line}' mean?")
         return False
 
 
@@ -141,7 +174,10 @@ class DevGame(DebugGame):
 
     def do_pycmd(self, arg):
         """Dev command only\nAttempt to run `arg` as raw python\nWARNING: potentially insecure"""
-        exec(arg)
+        try:
+            exec(arg)
+        except Exception as e:
+            print(e)
 
 
 # c = Cell(Rooms.StartCell.value)
@@ -161,3 +197,5 @@ else:
     game: Game = Game()
 
 game.cmdloop()
+
+
